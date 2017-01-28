@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block html_head %}
+        <meta charset="UTF-8">
+        <title>{% block head_title %} Your Breakfast Advisor{% endblock head_title %}</title>
+        {% block head_stylesheets %}
+            <link rel="stylesheet" type="text/css" href="/static/styles/bootstrap/3.3.2/css/bootstrap.min.css">
+            <link rel="stylesheet" type="text/css" href="/static/styles/style.css">
+        {% endblock head_stylesheets%}
+        {% block head_javascript %}
+        {% endblock head_javascript %}
+    {% endblock html_head %}
+
+</head>
+<body>
+<header>
+    <div class="nav">
+        <ul>
+            <li {% block home_menu %}{% endblock home_menu %} ><a href="/">Home</a></li>
+            <li {% block new_item_menu %}{% endblock new_item_menu %}><a href="/admin/add">Add new item</a></li>
+            <li {% block show_all_menu %}{% endblock show_all_menu %}><a href="/admin/items">Look through</a></li>
+            <li {% block contract_menu %}{% endblock contract_menu %}><a href="/contact">Contact</a></li>
+            <li {% block about_menu %}{% endblock about_menu %}><a href="/about">About</a></li>
+        </ul>
+    </div>
+</header>
+{% block content %}{% endblock content %}
+</body>

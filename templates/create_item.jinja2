@@ -1,0 +1,92 @@
+{% extends "base.jinja2" %}
+
+<body>
+{% block new_item_menu %} class="active" {% endblock new_item_menu %}
+{# <script type="text/javascript">#}
+{#        $('#image-file').bind('change', function() {#}
+{#            alert('This file size is: ' + this.files[0].size/1024/1024 + "MB");#}
+{#        });#}
+{#    </script>#}
+{% block content %}
+
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <span class="sr-only">Error:</span>
+        {{ error}}
+    </div>
+    {% endif %}
+
+    <h1 class="text-center">Hello {{ user }}! You have {% if role %} {{ role }} {% else %}no {% endif %} permissions</h1>
+    <h3 class="text-center">Here you can add new items to your breakfast dishes collection</h3>
+    <div class="row">
+		<div class="col-sm-offset-3 col-sm-6">
+			<div class="panel panel-success">
+				<div class="panel-heading"><h4 class="text-center">Add new item to collection</h4></div>
+				<div class="panel-body">
+                    <form action="" method="post" accept-charset="utf-8" enctype="multipart/form-data">
+						<div class="form-group">
+							<label class="control-label" for="name_en">Name (en)</label>
+							<input class="form-control" type="text" name="name_en" id="name_en">
+						</div>
+                        <div class="form-group">
+							<label class="control-label" for="name_ru">Name (ru)</label>
+							<input class="form-control" type="text" name="name_ru" id="name_ru">
+						</div>
+                        <div class="form-group">
+							<label class="control-label" for="description_en">Description (en)</label>
+							<input class="form-control" type="text" name="description_en" id="desc_en">
+						</div>
+                         <div class="form-group">
+							<label class="control-label" for="description_ru">Description (ru)</label>
+							<input class="form-control" type="text" name="description_ru" id="desc_ru">
+						</div>
+                         <div class="form-group">
+							<label class="control-label" for="recipe_en">Recipe (en)</label>
+							<input class="form-control" type="text" name="recipe_en" id="recipe_en">
+						</div>
+                        <div class="form-group">
+							<label class="control-label" for="recipe_ru">Recipe (ru)</label>
+							<input class="form-control" type="text" name="recipe_ru" id="recipe_ru">
+						</div>
+                        <div class="form-group">
+							<label class="control-label" for="ingredients_en">Ingredients (en)</label>
+							<input class="form-control" type="text" name="ingredients_en" id="ingr_en">
+						</div>
+                        <div class="form-group">
+							<label class="control-label" for="ingredients_ru">Ingredients (ru)</label>
+							<input class="form-control" type="text" name="ingredients_ru" id="ingr_ru">
+                        <div class="form-group">
+							<label class="control-label" for="category">Category</label>
+                            <select class="form-control"  name="category" id="category">
+                                <option value="drink">Drink</option>
+                                <option value="main_dish">Main Dish</option>
+                                <option value="aux_dish">Not main dish</option>
+                            </select>
+						</div>
+                        <div class="form-group">
+							<label class="control-label" for="cook_t">Cooking time </label>
+							<input class="form-control" type="text" name="cooking_time" id="cook_t">
+						</div>
+                        <div class="form-group">
+							<label class="control-label" for="tags">Tags </label>
+							<input class="form-control" type="text" name="tags" id="tags">
+						</div>
+                        <div class="form-group">
+							<label class="control-label" for="image_url">Image URL</label>
+							<input class="form-control" type="url" name="image_url" id="image_url">
+						</div>
+                         <div class="form-group">
+							<label class="control-label" for="image">Upload image</label>
+							<input class="form-control" type="file"  accept=".jpg,.jpeg,.png,.gif" name="image" id="image-file">
+						</div>
+						<div class="btn-row text-right">
+							<button class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i>Add item</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+    </div>
+{% endblock content %}
+</body>
