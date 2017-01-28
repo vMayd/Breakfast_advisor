@@ -6,9 +6,9 @@ def save_image(image, save_to, *, size=None):
         size = (150, 150)
     im = Image.open(image)
     # _format = im.format.lower()
-    resize = im.resize(size, Image.ANTIALIAS)
-    resize.save(save_to)
-
+    # resize = im.resize(size, Image.ANTIALIAS)
+    # resize.save(save_to)
+    im.save(save_to)
 
 class ValidationError(Exception):
     def __init__(self, key):
