@@ -1,14 +1,10 @@
 import aiohttp_jinja2
 from aiohttp.web import View
 from helper import save_image, ValidationError
-import pymongo
-import hashlib
+from models.helper import get_next_sequence_value
 import settings
-from models import model
+from models.model import dishes, counter_dish
 
-connection = pymongo.MongoClient('mongodb://localhost')
-db = connection.breakfast
-dishes = db.dishes
 
 class Index(View):
     async def get(self):
@@ -49,6 +45,7 @@ class CreateItem(View):
             data_dict['image_url'] = '%s://%s:%s/%s%s' % (
                 request.url.scheme, request.url.host, request.url.port,
                 settings.IMAGE_URL.lstrip('/'), filename)
+        data_dict.update({'dish_id':  get_next_sequence_value(counter_dish, 'dish_id')})
         #Todo validate input
         dishes.insert(data_dict)
 
