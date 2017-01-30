@@ -26,5 +26,9 @@ def parse_query_args(query):
 def get_items(collection, query_args):
     query = parse_query_args(query_args)
     result = collection.find(query, {"_id": 0}).sort([('_id', pymongo.ASCENDING)])
-    items = [item for item in result]
+    items = cursor_to_list(result)
     return items
+
+
+def cursor_to_list(cursor_obj):
+    return [item for item in cursor_obj]

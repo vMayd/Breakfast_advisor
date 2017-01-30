@@ -1,0 +1,43 @@
+{% extends "base.jinja2" %}
+
+<body>
+{% block show_all_menu %} class="active" {% endblock show_all_menu %}
+
+{% block content %}
+    <h1 class="text-center">There is all dishes you have</h1>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+           <td>Id</td>
+           <td>Name</td>
+           <td>Имя</td>
+           <td>Description</td>
+           <td>Описание</td>
+           <td>Ingredients</td>
+           <td>Ингредиенты</td>
+           <td>Category</td>
+           <td>Cooking Time</td>
+           <td>Image url</td>
+           <td>Tags</td>
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in dishes %}
+            <tr>
+                <td>{{ item.dish_id }}</td>
+                <td>{{ item.name_en }}</td>
+                <td>{{ item.name_ru }}</td>
+                <td>{{ item.description_en }}</td>
+                <td>{{ item.description_ru }}</td>
+                <td>{{ item.ingredients_en|join(', ')}}</td>
+                <td>{{ item.ingredients_ru|join(', ')}}</td>
+                <td>{{ item.category }}</td>
+                <td>{{ item.cooking_time }}</td>
+                <td><a href={{ item.image_url }}>{{ item.image_url }}</a></td>
+                <td>{{ item.tags|join(', ')}}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+</body>

@@ -1,13 +1,17 @@
 import settings
 from aiohttp import web
-from api import Handler
-from views.admin import CreateItem, Index
+from views.admin import CreateItem, Index, ShowAll
+from api.api import Drinks, MainDish, FirstDish, SecondDish, DishApi
 
-handler = Handler()
 routes = [
     ('*', '/', Index, 'index'),
-    ('POST', '/api/recipe/', handler.recipe, 'recipe', web.Request.json),
-    ('*', '/admin/add', CreateItem, 'create_item')
+    ('*', '/api/dishes/', DishApi, 'recipe', web.Request.json),
+    ('*', '/admin/add', CreateItem, 'create_item'),
+    ('*', '/admin/items', ShowAll, 'show_all_items'),
+    ('*', '/api/drink/', Drinks, 'api_drink'),
+    ('*', '/api/dish/main/', MainDish, 'api_dish_main'),
+    ('*', '/api/dish/first/', FirstDish, 'api_dish_first'),
+    ('*', '/api/dish/second/', SecondDish, 'api_dish_second'),
 ]
 
 

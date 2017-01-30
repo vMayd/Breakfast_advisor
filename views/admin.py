@@ -65,3 +65,13 @@ class CreateItem(View):
                     raise ValidationError(key)
             post_dict.update({key: value})
         return post_dict
+
+
+class ShowAll(View):
+    async def get(self):
+        return await self.get_resp(self.request)
+
+    @aiohttp_jinja2.template('show_all.jinja2')
+    async def get_resp(self, request):
+        dish_list = dishes.find(projection={'_id': False})
+        return {'dishes': dish_list}
