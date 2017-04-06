@@ -3,8 +3,7 @@ from jsonschema import exceptions
 from logger import *
 from motor import motor_asyncio
 from validator import dish as dish_schema
-from mongoengine import *
-
+from pymongo.errors import InvalidOperation
 # connection = pymongo.MongoClient(host=settings.MONGODB_HOST, port=settings.MONGODB_PORT)
 client = motor_asyncio.AsyncIOMotorClient('localhost', 27017)
 breakfast = client.breakfast
@@ -72,7 +71,7 @@ class BaseModel(metaclass=MetaCollection):
             jsonschema.validate(self.__dict__, self.schema)
         except exceptions.ValidationError as e:
             server_logger.error(e)
-            raise ValidationError(e)
+            raise InvalidOperation(e)
 
     @classmethod
     async def find(cls, **query):

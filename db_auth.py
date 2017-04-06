@@ -1,7 +1,5 @@
 import asyncio
 
-from mongoengine import connect
-from aiomotorengine import connect
 from aiohttp_security.abc import AbstractAuthorizationPolicy
 from passlib.hash import sha256_crypt
 
@@ -10,8 +8,8 @@ from models import model
 
 class DBAuthorizationPolicy(AbstractAuthorizationPolicy):
 
-    def __init__(self, db_name):
-        self.db = connect(db_name)
+    def __init__(self):
+        pass
 
     @asyncio.coroutine
     def authorized_userid(self, identity):

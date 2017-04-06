@@ -5,10 +5,10 @@ from aiohttp import web
 from aiohttp.web import View
 from aiohttp_security import remember
 from passlib.hash import sha256_crypt
-from mongoengine.errors import SaveConditionError, ValidationError as MongoValidationError
 
 import settings
-from models.model import User, Permission, users, permission
+from logger import server_logger
+from models.model import User, Permission
 from db_auth import check_credentials
 
 
@@ -40,8 +40,8 @@ class Login(View):
         password = form.get('password')
         if await check_credentials(login, password):
             await remember(request, response, login)
-            user = await users.find_one({'login': login})
-            response.set_cookie('bkAdv|usr', '%s|%s' % (login, user['name']), max_age=settings.COOKIE_AGE)
+            user = await User.find_one(login=login)
+            response.set_cookie('bkAdv|usr', '%s|%s' % (login, user.name), max_age=settings.COOKIE_AGE)
             return response
 
         return {'error': 'Wrong username or password'}
@@ -83,8 +83,8 @@ class Registration(View):
                         is_superuser=False, disabled=False)
             await user.save()
             await Permission(user=user.user_id, perm_name='user').save()
-        except (MongoValidationError, SaveConditionError):
-            # todo: log reason here
+        except Exception:
+            server_logger.log('registrtation failed: user {}'.format(user.__dict__))
             return {
                 'form': form_to_dict(form),
                 'error': 'Registration failed. Please try again'

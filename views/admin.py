@@ -1,5 +1,4 @@
 import functools
-import json
 
 import aiohttp_jinja2
 import asyncio
@@ -7,13 +6,11 @@ import asyncio
 from aiohttp import web
 from aiohttp.web import View
 from aiohttp_security import permits, forget
+from pymongo.errors import InvalidOperation
 
 from helper import save_image
-from models.model import User, Permission, Dish
-from mongoengine import errors
-from models.helper import get_next_sequence_value
+from models.model import User, Dish
 import settings
-from models.model import dishes
 
 
 def require(permission):
@@ -74,7 +71,7 @@ class CreateItem(View):
         try:
             dish = Dish(**data_dict)
             await dish.save()
-        except errors.ValidationError as e:
+        except InvalidOperation as e:
             return {'error': 'validation %s' % e}
         else:
             return {'message': 'Item successfully added'}

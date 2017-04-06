@@ -30,7 +30,7 @@ admin = web.Application(loop=loop, logger=server_logger)
 setup_routes(admin, 'admin')
 aiohttp_jinja2.setup(admin, loader=jinja2.FileSystemLoader('templates/'))
 setup_session(admin, RedisStorage(redis_pool, max_age=COOKIE_AGE, cookie_name=COOKIE_AUTH_NAME))
-setup_security(admin, SessionIdentityPolicy(), DBAuthorizationPolicy('breakfast'))
+setup_security(admin, SessionIdentityPolicy(), DBAuthorizationPolicy())
 
 app.add_subapp('/admin/', admin)
 
@@ -40,7 +40,7 @@ app.add_subapp('/api/', api)
 
 # Session and security
 setup_session(app, RedisStorage(redis_pool, max_age=COOKIE_AGE, cookie_name=COOKIE_AUTH_NAME))
-setup_security(app, SessionIdentityPolicy(), DBAuthorizationPolicy('breakfast'))
+setup_security(app, SessionIdentityPolicy(), DBAuthorizationPolicy())
 
 # Run server
 web.run_app(app=app, host=settings.HOST, port=settings.PORT, access_log=access_logger,
