@@ -1,18 +1,44 @@
+import functools
+import json
+
 import aiohttp_jinja2
+import asyncio
+
+from aiohttp import web
 from aiohttp.web import View
-from helper import save_image, ValidationError
+from aiohttp_security import permits, forget
+
+from helper import save_image
+from models.model import User, Permission, Dish
+from mongoengine import errors
 from models.helper import get_next_sequence_value
 import settings
-from models.model import dishes, counter_dish
+from models.model import dishes
 
 
-class Index(View):
+def require(permission):
+    def wrapper(f):
+        @asyncio.coroutine
+        @functools.wraps(f)
+        def wrapped(self, request):
+            has_perm = yield from permits(request, permission)
+            if not has_perm:
+                response = web.HTTPFound('/login/')
+                return response
+            return (yield from f(self, request))
+        return wrapped
+    return wrapper
+
+
+class Users(View):
     async def get(self):
         return await self.get_index(self.request)
 
-    @aiohttp_jinja2.template('index.jinja2')
+    @require('admin')
+    @aiohttp_jinja2.template('users.html')
     async def get_index(self, request):
-        return None
+        user_list = await User.find()
+        return {'users': user_list}
 
 
 class CreateItem(View):
@@ -23,31 +49,35 @@ class CreateItem(View):
     async def post(self):
         return await self.post_resp(self.request)
 
-    @aiohttp_jinja2.template('create_item.jinja2')
+    @require('admin')
+    @aiohttp_jinja2.template('create_item.html')
     async def get_resp(self, request):
-        return {'user': 'Toma', 'role': 'superuser'}
+        choices = Dish.CATEGORIES
+        return {'choices': choices}
 
-    @aiohttp_jinja2.template('create_item.jinja2')
+    @require('admin')
+    @aiohttp_jinja2.template('create_item.html')
     async def post_resp(self, request):
         data = await request.post()
-        try:
-            data_dict = self.post_data_to_dict(data)
-        except ValidationError as e:
-            return {'error': e}
+        data_dict = self.post_data_to_dict(data)
         if data['image']:
             data_dict.pop('image')
             image = data['image']
             image_file = image.file
             filename = image.filename
-            #filename = hashlib.sha1(bytearray(image.filename, 'utf8')).hexdigest()
             path = '%s/%s' % (settings.IMAGE_DIRECTORY.rstrip('/'), filename)
             save_image(image_file, path)
             data_dict['image_url'] = '%s://%s:%s/%s%s' % (
                 request.url.scheme, request.url.host, request.url.port,
                 settings.IMAGE_URL.lstrip('/'), filename)
-        data_dict.update({'dish_id':  get_next_sequence_value(counter_dish, 'dish_id')})
-        #Todo validate input
-        dishes.insert(data_dict)
+        # data_dict.update({'dish_id':  get_next_sequence_value(counter_dish, 'dish_id')})
+        try:
+            dish = Dish(**data_dict)
+            await dish.save()
+        except errors.ValidationError as e:
+            return {'error': 'validation %s' % e}
+        else:
+            return {'message': 'Item successfully added'}
 
     @staticmethod
     def post_data_to_dict(data):
@@ -62,7 +92,7 @@ class CreateItem(View):
                 try:
                     value = int(value)
                 except (TypeError, ValueError):
-                    raise ValidationError(key)
+                    pass
             post_dict.update({key: value})
         return post_dict
 
@@ -71,7 +101,19 @@ class ShowAll(View):
     async def get(self):
         return await self.get_resp(self.request)
 
-    @aiohttp_jinja2.template('show_all.jinja2')
+    @require('admin')
+    @aiohttp_jinja2.template('show_all.html')
     async def get_resp(self, request):
-        dish_list = dishes.find(projection={'_id': False})
+        dish_list = await Dish.find()
         return {'dishes': dish_list}
+
+
+class Logout(View):
+    async def get(self):
+        return await self.get_resp(self.request)
+
+    @require('admin')
+    async def get_resp(self, request):
+        response = web.HTTPFound('/')
+        await forget(request, response)
+        return response

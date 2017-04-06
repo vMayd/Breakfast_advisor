@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block html_head %}
+        <meta charset="UTF-8">
+        <link rel="icon" href="/static/styles/icon.png" type="image/x-icon">
+        <title>{% block head_title %} Your Breakfast Advisor{% endblock head_title %}</title>
+        {% block head_stylesheets %}
+            <link rel="stylesheet" type="text/css" href="/static/styles/bootstrap/3.3.2/css/bootstrap.min.css">
+{#            <link rel="stylesheet" type="text/css" href="/static/styles/style.css">#}
+        {% endblock head_stylesheets%}
+        {% block head_javascript %}
+            <script src="/static/styles/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        {% endblock head_javascript %}
+    {% endblock html_head %}
+
+
+</head>
+<body>
+<nav class="navbar navbar-default">
+     <div class="container-fluid">
+        <ul class="nav nav-tabs">
+            <li {% block home_menu %}{% endblock home_menu %} role="presentation" ><a href="/admin/">Users</a></li>
+            <li {% block new_item_menu %}{% endblock new_item_menu %} role="presentation"><a href="/admin/add/">Add new item</a></li>
+            <li {% block show_all_menu %}{% endblock show_all_menu %} role="presentation"><a href="/admin/items/">Show all items</a></li>
+{#            <li {% block contract_menu %}{% endblock contract_menu %} role="presentation"><a href="/contact/">Contact</a></li>#}
+{#            <li {% block about_menu %}{% endblock about_menu %} role="presentation"><a href="/about/">About</a></li>#}
+            <li role="presentation" class="dropdown pull-right">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id="usr"> <span class="caret"></span> </a>
+                <ul class="dropdown-menu">
+                    <li><a href="#">Action</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="/logout/">Logout</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</nav>
+<script type="text/javascript">
+    function getCookie(name) {
+        var value = "; " + document.cookie;
+        var parts = value.split("; " + name + "=");
+        if (parts.length == 2) return parts.pop().split(";").shift();
+    }
+    window.onload = function () {
+        d=getCookie('bkAdv|usr');
+        if (d != undefined){
+            document.getElementById("usr").innerHTML=d
+        }
+        else {
+            document.getElementById("usr").innerHTML = ""
+        }
+    };
+</script>
+{% block content %}{% endblock content %}
+<script src="/static/styles/bootstrap/3.3.2/js/dropdown.js"></script>
+</body>

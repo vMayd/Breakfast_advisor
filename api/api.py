@@ -1,8 +1,8 @@
 from aiohttp import web
 from aiohttp.web import View
 
-from models.helper import get_items, cursor_to_list
-from models.model import dishes
+from models.helper import parse_query_args
+from models.model import Dish
 from validator import *
 
 projection = {
@@ -25,8 +25,10 @@ class DishApi(View):
             validate(name, data)
         except jsonschema.ValidationError as e:
             return web.HTTPBadRequest(reason='%s: %s' % ('Validation error', e.message))
-        result = get_items(dishes, data)
-        return web.json_response({'response': result})
+        query = parse_query_args(data)
+        cursor = Dish.collection.find(query, projection=projection)
+        result_list = await cursor.to_list(length=1000)
+        return web.json_response({'response': result_list})
 
 
 class Drinks(View):
@@ -34,8 +36,9 @@ class Drinks(View):
         return await self.get_drinks(self.request)
 
     async def get_drinks(self, request):
-        drinks = dishes.find(filter={'category': 'drink'}, projection=projection)
-        return web.json_response(cursor_to_list(drinks))
+        cursor = Dish.collection.find({'category': 'drink'}, projection=projection)
+        result_list = await cursor.to_list(length=1000)
+        return web.json_response(result_list)
 
 
 class MainDish(View):
@@ -43,8 +46,9 @@ class MainDish(View):
         return await self.get_main(self.request)
 
     async def get_main(self, request):
-        main = dishes.find(filter={'category': 'main_dish'}, projection=projection)
-        return web.json_response(cursor_to_list(main))
+        cursor = Dish.collection.find({'category': 'main_dish'}, projection=projection)
+        result_list = await cursor.to_list(length=1000)
+        return web.json_response(result_list)
 
 
 class FirstDish(View):
@@ -52,8 +56,9 @@ class FirstDish(View):
         return await self.get_first(self.request)
 
     async def get_first(self, request):
-        first = dishes.find(filter={'category': 'second_1'}, projection=projection)
-        return web.json_response(cursor_to_list(first))
+        cursor = Dish.collection.find({'category': 'second_1'}, projection=projection)
+        result_list = await cursor.to_list(length=1000)
+        return web.json_response(result_list)
 
 
 class SecondDish(View):
@@ -61,5 +66,6 @@ class SecondDish(View):
         return await self.get_second(self.request)
 
     async def get_second(self, request):
-        second = dishes.find(filter={'category': 'second_2'}, projection=projection)
-        return web.json_response(cursor_to_list(second))
+        cursor = Dish.collection.find({'category': 'second_2'}, projection=projection)
+        result_list = await cursor.to_list(length=1000)
+        return web.json_response(result_list)

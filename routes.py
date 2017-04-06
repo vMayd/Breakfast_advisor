@@ -1,22 +1,34 @@
 import settings
 from aiohttp import web
-from views.admin import CreateItem, Index, ShowAll
+from views.admin import CreateItem, Users, ShowAll, Logout
+from views.main import Index, Login, Registration
 from api.api import Drinks, MainDish, FirstDish, SecondDish, DishApi
 
-routes = [
-    ('*', '/', Index, 'index'),
-    ('*', '/api/dishes/', DishApi, 'recipe', web.Request.json),
-    ('*', '/admin/add', CreateItem, 'create_item'),
-    ('*', '/admin/items', ShowAll, 'show_all_items'),
-    ('*', '/api/drink/', Drinks, 'api_drink'),
-    ('*', '/api/dish/main/', MainDish, 'api_dish_main'),
-    ('*', '/api/dish/first/', FirstDish, 'api_dish_first'),
-    ('*', '/api/dish/second/', SecondDish, 'api_dish_second'),
-]
+routes = {
+    'admin': [
+        ('*', '/add/', CreateItem, 'create_item'),
+        ('*', '/', Users, 'users'),
+        ('*', '/items/', ShowAll, 'show_all_items'),
+    ],
+    'main': [
+        ('*', '/', Index, 'index'),
+        ('*', '/login/', Login, 'login'),
+        ('*', '/logout/', Logout, 'logout'),
+        ('*', '/registration/', Registration, 'registration'),
+    ],
+    'api': [
+        ('*', '/query/', DishApi, 'query'),
+        ('*', '/drink/', Drinks, 'api_drink'),
+        ('*', '/dish/main/', MainDish, 'api_dish_main'),
+        ('*', '/dish/first/', FirstDish, 'api_dish_first'),
+        ('*', '/dish/second/', SecondDish, 'api_dish_second'),
+    ]
+}
 
 
-def setup_routes(app):
-    for route in routes:
+def setup_routes(app, name):
+    assert name in routes.keys(), 'Make sure that provided name present in routes'
+    for route in routes[name]:
         if len(route) > 4:
             app.router.add_route(route[0], route[1], route[2], name=route[3], expect_handler=route[4])
         else:

@@ -1,4 +1,4 @@
-{% extends "base.jinja2" %}
+{% extends "base.html" %}
 
 <body>
 {% block new_item_menu %} class="active" {% endblock new_item_menu %}
@@ -12,17 +12,22 @@
     {% if error %}
     <div class="alert alert-danger" role="alert">
         <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-        <span class="sr-only">Error:</span>
+        <span class="sr-only">Error: {{ error }}</span>
         {{ error}}
     </div>
     {% endif %}
-
-    <h1 class="text-center">Hello {{ user }}! You have {% if role %} {{ role }} {% else %}no {% endif %} permissions</h1>
-    <h3 class="text-center">Here you can add new items to your breakfast dishes collection</h3>
+    {% if message %}
+        <div class="alert alert-success" role="alert">
+        <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span>
+        <span class="sr-only">Message:</span>
+         {{ message }}
+    </div>
+    {% endif %}
+{#    <h1 class="text-center">Add new items to your breakfast dishes collection</h1>#}
     <div class="row">
 		<div class="col-sm-offset-3 col-sm-6">
 			<div class="panel panel-success">
-				<div class="panel-heading"><h4 class="text-center">Add new item to collection</h4></div>
+				<div class="panel-heading"><h4 class="text-center" style="font-size: 20px">Add new item to collection</h4></div>
 				<div class="panel-body">
                     <form action="" method="post" accept-charset="utf-8" enctype="multipart/form-data">
 						<div class="form-group">
@@ -60,10 +65,9 @@
                         <div class="form-group">
 							<label class="control-label" for="category">Category</label>
                             <select class="form-control"  name="category" id="category">
-                                <option value="drink">Drink</option>
-                                <option value="main_dish">Main Dish</option>
-                                <option value="second_1">Second #1</option>
-                                <option value="second_2">Second #2</option>
+                                {% for value, name in choices %}
+                                <option value="{{value}}">{{name}}</option>
+                                {% endfor %}
                             </select>
 						</div>
                         <div class="form-group">
