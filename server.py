@@ -18,8 +18,8 @@ from motor import motor_asyncio
 
 
 @click.command()
-@click.option('-H', '--host', default='localhost', help='TCP/IP hostname to serve on')
-@click.option('-P', '--port', default=8080, help='TCP/IP port to serve on')
+@click.option('-H', '--host', default=settings.HOST, help='TCP/IP hostname to serve on')
+@click.option('-P', '--port', default=settings.PORT, help='TCP/IP port to serve on')
 def run_server(host, port):
     loop = asyncio.get_event_loop()
     redis_pool = loop.run_until_complete(create_pool(('localhost', 6379)))
